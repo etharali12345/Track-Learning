@@ -1,0 +1,5 @@
+Library:
+NativeWind => write tailwind css
+
+//Extenstion: ES7+ React/Redux/React-Native snippets
+rnf || rnfe ==> write it on file, React Native Function with Expo, it makes component: code snippet shortcut
