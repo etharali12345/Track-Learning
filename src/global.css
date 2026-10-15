@@ -4,6 +4,10 @@
 
 @import "nativewind/theme";
 
+/*@theme is Tailwind directives*/
+/*these are css variables, prefix should stay consistent
+  fonts: we synced the font types, that have been registered(plugin) & loaded(root layout), with tailwind
+*/
 @theme {
   --color-background: #fff9e3;
   --color-foreground: #081126;
@@ -45,6 +49,10 @@
   --font-sans-extrabold: sans-extrabold;
 }
 
+/*
+@layer is in regular CSS, control which group of CSS rules takes priority, from upper to lower.
+@apply directive injects existing Tailwind into vanilla CSS selectors
+*/
 @layer components {
   .tabs-icon {
     @apply size-12 items-center justify-center;

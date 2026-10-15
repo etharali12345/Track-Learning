@@ -1,4 +1,3 @@
-import "@/global.css";
 import { Link } from "expo-router";
 import { styled } from "nativewind";
 import { Text } from "react-native";
@@ -9,19 +8,19 @@ const StyledSafeAreaView = styled(SafeAreaView);
 
 export default function index() {
   return (
-    <StyledSafeAreaView className="flex-1 items-center justify-center bg-background">
-      <Text className="text-xl font-bold text-blue-500">
-        Welcome to Nativewind! index
+    <StyledSafeAreaView className="flex-1 items-center bg-background">
+      <Text className="text-5xl text-destructive font-sans-extrabold">
+        Home
       </Text>
       <Link
         href="/(auth)/SignIn"
-        className="bg-black text-white text-xl rounded mt-4 px-2 py-1"
+        className="bg-black text-white text-xl rounded mt-4 px-2 py-1 font-sans-bold"
       >
         Sign In
       </Link>
       <Link
         href="/Subscriptions"
-        className="bg-black text-white text-xl rounded mt-4 px-2 py-1"
+        className="bg-black text-white text-xl rounded mt-4 px-2 py-1 font-sans-bold"
       >
         Subscription
       </Link>
