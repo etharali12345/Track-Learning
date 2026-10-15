@@ -6,7 +6,7 @@ const StyledSafeAreaView = styled(SafeAreaView);
 
 export default function Insights() {
   return (
-    <StyledSafeAreaView className="flex-1 bg-subscription items-center justify-center">
+    <StyledSafeAreaView className="flex-1 bg-accent items-center justify-center">
       <Text>Insights</Text>
     </StyledSafeAreaView>
   );
