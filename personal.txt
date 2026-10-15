@@ -1,5 +1,9 @@
 Library:
 NativeWind => write tailwind css
 
+Package:
+clsx: can construct CSS className strings conditionally, join different classes
+why not emplate literals?
+
 //Extenstion: ES7+ React/Redux/React-Native snippets
 rnf || rnfe ==> write it on file, React Native Function with Expo, it makes component: code snippet shortcut
