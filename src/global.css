@@ -83,11 +83,11 @@
   }
 
   .home-user-name {
-    @apply ml-4 text-2xl font-sans-bold text-primary;
+    @apply ml-4 text-xl font-sans-bold text-primary;
   }
 
   .home-add-icon {
-    @apply size-12;
+    @apply size-12 border border-border rounded-full;
   }
 
   .home-balance-card {
@@ -115,7 +115,7 @@
   }
 
   .list-title {
-    @apply text-2xl font-sans-bold text-primary;
+    @apply text-xl font-sans-bold text-primary;
   }
 
   .list-action {
@@ -151,7 +151,7 @@
   }
 
   .sub-card {
-    @apply rounded-2xl border border-border p-4;
+    @apply rounded-2xl border border-border p-4 mb-4;
   }
 
   .sub-card-expanded {
