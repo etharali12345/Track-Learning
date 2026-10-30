@@ -1,16 +1,50 @@
 import "@/global.css";
+import { ClerkProvider, useAuth } from "@clerk/expo";
+import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
 import { useEffect } from "react";
 
-export const unstable_settings = {
-  initialRouteName: "(tabs)", // Force 'feed' to be the initial tab view
-};
+function getPublishableKey(): string {
+  const key = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  if (!key) {
+    throw new Error(
+      "Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY. Add your Clerk publishable key to the app environment.",
+    );
+  }
+  return key;
+}
 
-//expo rotuter, turn each file into route
+const publishableKey = getPublishableKey();
+
+SplashScreen.preventAutoHideAsync();
+
+function AppNavigator({ fontsLoaded }: { fontsLoaded: boolean }) {
+  const { isLoaded, isSignedIn } = useAuth();
+
+  useEffect(() => {
+    if (fontsLoaded && isLoaded) {
+      void SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded, isLoaded]);
+
+  if (!fontsLoaded || !isLoaded) return null;
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Protected guard={isSignedIn}>
+        <Stack.Screen name="(tabs)" />
+        <Stack.Screen name="subscriptions/[id]" />
+      </Stack.Protected>
+      <Stack.Protected guard={!isSignedIn}>
+        <Stack.Screen name="(auth)" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
+
 export default function RootLayout() {
-  //load custom fonts, and hide splash screen when fonts are loaded
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     "sans-regular": require("../../assets/fonts/PlusJakartaSans-Regular.ttf"),
     "sans-bold": require("../../assets/fonts/PlusJakartaSans-Bold.ttf"),
     "sans-medium": require("../../assets/fonts/PlusJakartaSans-Medium.ttf"),
@@ -19,13 +53,11 @@ export default function RootLayout() {
     "sans-light": require("../../assets/fonts/PlusJakartaSans-Light.ttf"),
   });
 
-  useEffect(() => {
-    if (fontsLoaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [fontsLoaded]);
+  const fontsReady = fontsLoaded || !!fontError;
 
-  if (!fontsLoaded) return null;
-
-  return <Stack screenOptions={{ headerShown: false }} />;
+  return (
+    <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
+      <AppNavigator fontsLoaded={fontsReady} />
+    </ClerkProvider>
+  );
 }

@@ -2,12 +2,12 @@ import { useLocalSearchParams } from "expo-router";
 import { Text, View } from "react-native";
 
 //[id].tsx is a Dynamic Route
-export default function Subscritptions() {
+export default function SubscriptionDetails() {
   //read the parameters that is send to this screen route
-  const { id } = useLocalSearchParams();
+  const { id } = useLocalSearchParams<{ id: string }>();
   return (
     <View>
-      <Text>Subscription</Text>
+      <Text>Subscription {id ?? "details"}</Text>
     </View>
   );
 }

@@ -1,10 +1,10 @@
 import ListHeading from "@/components/ListHeading";
 import SubscriptionsCard from "@/components/SubscriptionsCard";
 import UpcomingSubscriptionsCard from "@/components/UpcomingSubscriptionsCard";
+import { useUser } from "@clerk/expo";
 import {
   HOME_BALANCE,
   HOME_SUBSCRIPTIONS,
-  HOME_USER,
   UPCOMING_SUBSCRIPTIONS,
 } from "@root/constants/data";
 import { icons } from "@root/constants/icon";
@@ -19,8 +19,9 @@ import { SafeAreaView } from "react-native-safe-area-context";
 //use styled because SafeAreaView is not a nativewind component, so we need to wrap it in a styled component to use nativewind classes,
 const StyledSafeAreaView = styled(SafeAreaView);
 
-export default function index() {
+export default function HomeScreen() {
   const [expandedSubId, setExpandedSubId] = useState<string | null>(null);
+  const { user } = useUser();
 
   return (
     <StyledSafeAreaView className="flex-1 bg-background p-5">
@@ -30,7 +31,9 @@ export default function index() {
             <View className="home-header">
               <View className="home-user">
                 <Image source={images.avatar} className="home-avatar" />
-                <Text className="home-user-name">{HOME_USER.name}</Text>
+                <Text className="home-user-name">
+                  {user?.firstName} | {user?.lastName}{" "}
+                </Text>
               </View>
               <Image source={icons.add} className="home-add-icon" />
             </View>

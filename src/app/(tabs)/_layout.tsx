@@ -6,7 +6,7 @@ import { Image, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 //layout for the tabs route group
-export default function _layout() {
+export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const tabBar = components.tabBar;
 

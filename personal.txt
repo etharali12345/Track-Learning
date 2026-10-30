@@ -10,3 +10,5 @@ why not emplate literals?
 //Extenstion: ES7+ React/Redux/React-Native snippets
 rnf || rnfe ==> write it on file, React Native Function with Expo, it makes component: code snippet shortcut
 
+//Clerk
+tokenCache: where the userS ession is sotred, it uses the expo-secure-store under the hood, encrypting the session token on the device
