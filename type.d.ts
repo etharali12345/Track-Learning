@@ -60,4 +60,13 @@ declare global {
   interface ListHeadingProps {
     title: string;
   }
+
+  type SignInView =
+    | "credentials"
+    | "mfa"
+    | "reset-email"
+    | "reset-code"
+    | "reset-password";
+
+  type ChallengeMethod = "email_code" | "phone_code" | "totp" | "backup_code";
 }

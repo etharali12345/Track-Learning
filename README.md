@@ -16,6 +16,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npx expo start
    ```
 
+## Authentication setup
+
+Copy `.env.example` to `.env` and set `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` to your app's publishable key. In the Clerk Dashboard, enable the Native API and configure email address/password sign-up and sign-in with email-code verification. Password reset and optional multi-factor verification use email codes.
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)

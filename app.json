@@ -8,7 +8,8 @@
     "scheme": "track",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.anonymous.Track"
     },
     "android": {
       "adaptiveIcon": {
@@ -17,7 +18,8 @@
         "backgroundImage": "./assets/images/android-icon-background.png",
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.anonymous.Track"
     },
     "web": {
       "output": "static",
@@ -37,18 +39,17 @@
         "expo-font",
         {
           "fonts": [
-            "./assets/fonts/Inter-Black.ttf",
-            "./assets/fonts/Inter-Bold.ttf",
-            "./assets/fonts/Inter-ExtraBold.ttf",
-            "./assets/fonts/Inter-ExtraLight.ttf",
-            "./assets/fonts/Inter-Light.ttf",
-            "./assets/fonts/Inter-Medium.ttf",
-            "./assets/fonts/Inter-Regular.ttf",
-            "./assets/fonts/Inter-SemiBold.ttf",
-            "./assets/fonts/Inter-Thin.ttf"
+            "./assets/fonts/PlusJakartaSans-Regular.ttf",
+            "./assets/fonts/PlusJakartaSans-Medium.ttf",
+            "./assets/fonts/PlusJakartaSans-SemiBold.ttf",
+            "./assets/fonts/PlusJakartaSans-Bold.ttf",
+            "./assets/fonts/PlusJakartaSans-ExtraBold.ttf",
+            "./assets/fonts/PlusJakartaSans-Light.ttf"
           ]
         }
-      ]
+      ],
+      "@clerk/expo",
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
