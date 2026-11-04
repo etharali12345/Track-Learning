@@ -1,6 +1,7 @@
 import ListHeading from "@/components/ListHeading";
 import SubscriptionsCard from "@/components/SubscriptionsCard";
 import UpcomingSubscriptionsCard from "@/components/UpcomingSubscriptionsCard";
+import { posthogLogger } from "@/config/posthog-logger";
 import { useUser } from "@clerk/expo";
 import {
   HOME_BALANCE,
@@ -12,6 +13,7 @@ import images from "@root/constants/images";
 import { formatCurrency } from "@root/lib/utils";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
+import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
 import { FlatList, Image, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -22,6 +24,7 @@ const StyledSafeAreaView = styled(SafeAreaView);
 export default function HomeScreen() {
   const [expandedSubId, setExpandedSubId] = useState<string | null>(null);
   const { user } = useUser();
+  const posthog = usePostHog();
 
   return (
     <StyledSafeAreaView className="flex-1 bg-background p-5">
@@ -78,6 +81,23 @@ export default function HomeScreen() {
             {...item}
             expanded={expandedSubId === item.id}
             onPress={() => {
+              if (expandedSubId !== item.id) {
+                const subscriptionProperties = {
+                  subscription_id: item.id,
+                  billing_interval: item.billing,
+                  subscription_category: (item.category ?? item.plan)!,
+                };
+
+                posthog.capture(
+                  "subscription_details_opened",
+                  subscriptionProperties,
+                );
+                posthogLogger.info(
+                  "subscription details opened",
+                  subscriptionProperties,
+                );
+              }
+
               setExpandedSubId((currentId) =>
                 currentId === item.id ? null : item.id,
               );

@@ -5,7 +5,9 @@ import {
   AuthScreen,
   AuthText,
 } from "@/components/auth/AuthScreen";
+import { posthogLogger } from "@/config/posthog-logger";
 import { useAuth, useSignIn } from "@clerk/expo";
+import { usePostHog } from "posthog-react-native";
 import { useEffect, useState } from "react";
 import { Keyboard, View } from "react-native";
 
@@ -31,6 +33,7 @@ export default function SignIn() {
   //{ originalName: newName } destructure with renaming
   const { isLoaded: authLoaded } = useAuth();
   const { signIn, errors, fetchStatus } = useSignIn();
+  const posthog = usePostHog();
   //type goes in angle brackets (a generic)
   const [view, setView] = useState<SignInView>("credentials");
   const [email, setEmail] = useState("");
@@ -71,7 +74,22 @@ export default function SignIn() {
     const { error } = await signIn.finalize();
     if (error) {
       setFailure(error, "We couldn't complete sign in. Please try again.");
+      return;
     }
+
+    const authenticationFlow =
+      view === "reset-password"
+        ? "password_reset"
+        : view === "mfa"
+          ? "mfa"
+          : "password";
+
+    posthog.capture("authentication_completed", {
+      authentication_flow: authenticationFlow,
+    });
+    posthogLogger.info("authentication completed", {
+      authentication_flow: authenticationFlow,
+    });
   };
 
   const chooseChallenge = async (method: ChallengeMethod) => {
@@ -415,8 +433,6 @@ export default function SignIn() {
           : view === "reset-code"
             ? `Enter the code sent to ${email.trim()}.`
             : "Choose a strong password you haven't used before.";
-
-  console.log("view", view);
 
   return (
     <AuthScreen title={title} subtitle={subtitle}>
