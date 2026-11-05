@@ -13,6 +13,7 @@ export default function Settings() {
   const handleSignOut = async () => {
     posthog.capture("user_signed_out");
     await signOut();
+    posthog.reset();
   };
 
   return (
