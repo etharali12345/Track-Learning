@@ -1,9 +1,12 @@
+import { posthog } from "@/config/posthog";
 import "@/global.css";
-import { ClerkProvider, useAuth } from "@clerk/expo";
+import { ClerkProvider, useAuth, useUser } from "@clerk/expo";
 import { tokenCache } from "@clerk/expo/token-cache";
 import { useFonts } from "expo-font";
 import { SplashScreen, Stack } from "expo-router";
-import { useEffect } from "react";
+import { StatusBar } from "expo-status-bar";
+import { PostHogProvider, usePostHog } from "posthog-react-native";
+import { type ReactNode, useEffect, useRef } from "react";
 
 function getPublishableKey(): string {
   const key = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
@@ -19,6 +22,41 @@ const publishableKey = getPublishableKey();
 
 SplashScreen.preventAutoHideAsync();
 
+function PostHogIdentity({ children }: { children: ReactNode }) {
+  const { isLoaded: authLoaded, isSignedIn } = useAuth();
+  const { isLoaded: userLoaded, user } = useUser();
+  const posthog = usePostHog();
+  //useRef doesn't trigger re-renders
+  const identifiedUserId = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!authLoaded || !userLoaded) return;
+
+    if (!isSignedIn || !user) {
+      if (identifiedUserId.current) {
+        posthog.reset();
+        identifiedUserId.current = null;
+      }
+      return;
+    }
+
+    if (identifiedUserId.current === user.id) return;
+
+    const personProperties: { email?: string; name?: string } = {};
+    if (user.primaryEmailAddress?.emailAddress) {
+      personProperties.email = user.primaryEmailAddress.emailAddress;
+    }
+    if (user.fullName) {
+      personProperties.name = user.fullName;
+    }
+
+    posthog.identify(user.id, { $set: personProperties });
+    identifiedUserId.current = user.id;
+  }, [authLoaded, isSignedIn, posthog, user, userLoaded]);
+
+  return <>{children}</>;
+}
+
 function AppNavigator({ fontsLoaded }: { fontsLoaded: boolean }) {
   const { isLoaded, isSignedIn } = useAuth();
 
@@ -31,15 +69,18 @@ function AppNavigator({ fontsLoaded }: { fontsLoaded: boolean }) {
   if (!fontsLoaded || !isLoaded) return null;
 
   return (
-    <Stack screenOptions={{ headerShown: false }}>
-      <Stack.Protected guard={isSignedIn}>
-        <Stack.Screen name="(tabs)" />
-        <Stack.Screen name="subscriptions/[id]" />
-      </Stack.Protected>
-      <Stack.Protected guard={!isSignedIn}>
-        <Stack.Screen name="(auth)" />
-      </Stack.Protected>
-    </Stack>
+    <>
+      <StatusBar style="dark" />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Protected guard={isSignedIn}>
+          <Stack.Screen name="(tabs)" />
+          <Stack.Screen name="subscriptions/[id]" />
+        </Stack.Protected>
+        <Stack.Protected guard={!isSignedIn}>
+          <Stack.Screen name="(auth)" />
+        </Stack.Protected>
+      </Stack>
+    </>
   );
 }
 
@@ -55,9 +96,17 @@ export default function RootLayout() {
 
   const fontsReady = fontsLoaded || !!fontError;
 
+  const appNavigator = <AppNavigator fontsLoaded={fontsReady} />;
+
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <AppNavigator fontsLoaded={fontsReady} />
+      {posthog ? (
+        <PostHogProvider client={posthog}>
+          <PostHogIdentity>{appNavigator}</PostHogIdentity>
+        </PostHogProvider>
+      ) : (
+        appNavigator
+      )}
     </ClerkProvider>
   );
 }

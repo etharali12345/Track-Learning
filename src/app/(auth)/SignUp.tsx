@@ -5,7 +5,9 @@ import {
   AuthScreen,
   AuthText,
 } from "@/components/auth/AuthScreen";
+import { posthogLogger } from "@/config/posthog-logger";
 import { useAuth, useSignUp } from "@clerk/expo";
+import { usePostHog } from "posthog-react-native";
 import { useEffect, useState } from "react";
 import { Keyboard, View } from "react-native";
 
@@ -14,6 +16,7 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 export default function SignUp() {
   const { isLoaded: authLoaded } = useAuth();
   const { signUp, errors, fetchStatus } = useSignUp();
+  const posthog = usePostHog();
   const [isVerifying, setIsVerifying] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -119,7 +122,11 @@ export default function SignUp() {
       const { error: finalizeError } = await signUp.finalize();
       if (finalizeError) {
         setFailure(finalizeError, "We couldn't finish creating your account. Please try again.");
+        return;
       }
+
+      posthog.capture("account_created");
+      posthogLogger.info("account created after email verification");
     } catch {
       setRequestError("We couldn't connect securely. Check your connection and try again.");
     } finally {

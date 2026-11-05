@@ -22,6 +22,7 @@ declare global {
     id: string;
     icon: ImageSourcePropType;
     name: string;
+    frequency?: SubscriptionFrequency;
     plan?: string;
     category?: string;
     paymentMethod?: string;
@@ -33,6 +34,8 @@ declare global {
     renewalDate?: string;
     color?: string;
   }
+
+  type SubscriptionFrequency = "Monthly" | "Yearly";
 
   //Omit is a built-in TypeScript utility type
   //creates a new type based on Subscription but excludes the id
