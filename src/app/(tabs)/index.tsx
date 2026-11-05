@@ -1,21 +1,20 @@
+import CreateSubscriptionModal from "@/components/CreateSubscriptionModal";
 import ListHeading from "@/components/ListHeading";
 import SubscriptionsCard from "@/components/SubscriptionsCard";
+import { useSubscriptions } from "@/components/SubscriptionsContext";
 import UpcomingSubscriptionsCard from "@/components/UpcomingSubscriptionsCard";
 import { posthogLogger } from "@/config/posthog-logger";
+import { HOME_BALANCE, UPCOMING_SUBSCRIPTIONS } from "@/constants/data";
+import { icons } from "@/constants/icon";
+import images from "@/constants/images";
 import { useUser } from "@clerk/expo";
-import {
-  HOME_BALANCE,
-  HOME_SUBSCRIPTIONS,
-  UPCOMING_SUBSCRIPTIONS,
-} from "@root/constants/data";
-import { icons } from "@root/constants/icon";
-import images from "@root/constants/images";
 import { formatCurrency } from "@root/lib/utils";
+import { clsx } from "clsx";
 import dayjs from "dayjs";
 import { styled } from "nativewind";
 import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
-import { FlatList, Image, Text, View } from "react-native";
+import { FlatList, Image, Pressable, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 //use styled because SafeAreaView is not a nativewind component, so we need to wrap it in a styled component to use nativewind classes,
@@ -23,11 +22,18 @@ const StyledSafeAreaView = styled(SafeAreaView);
 
 export default function HomeScreen() {
   const [expandedSubId, setExpandedSubId] = useState<string | null>(null);
+  const { subscriptions, addSubscription } = useSubscriptions();
+  const [isCreateModalVisible, setIsCreateModalVisible] = useState(false);
   const { user } = useUser();
   const posthog = usePostHog();
 
   return (
-    <StyledSafeAreaView className="flex-1 bg-background p-5">
+    <StyledSafeAreaView
+      className={clsx(
+        "flex-1",
+        isCreateModalVisible ? "bg-black" : "bg-background",
+      )}
+    >
       <FlatList
         ListHeaderComponent={
           <>
@@ -38,7 +44,14 @@ export default function HomeScreen() {
                   {user?.firstName} | {user?.lastName}{" "}
                 </Text>
               </View>
-              <Image source={icons.add} className="home-add-icon" />
+              <Pressable
+                accessibilityLabel="Create a subscription"
+                accessibilityRole="button"
+                hitSlop={8}
+                onPress={() => setIsCreateModalVisible(true)}
+              >
+                <Image source={icons.add} className="home-add-icon" />
+              </Pressable>
             </View>
 
             <View className="home-balance-card">
@@ -75,7 +88,7 @@ export default function HomeScreen() {
             <ListHeading title="All Subscriptions" />
           </>
         }
-        data={HOME_SUBSCRIPTIONS}
+        data={subscriptions}
         renderItem={({ item }) => (
           <SubscriptionsCard
             {...item}
@@ -110,7 +123,12 @@ export default function HomeScreen() {
         ListEmptyComponent={
           <Text className="home-empty-state">No Subscriptions yet</Text>
         }
-        contentContainerClassName="pb-20"
+        contentContainerClassName="pb-20 bg-background p-5"
+      />
+      <CreateSubscriptionModal
+        visible={isCreateModalVisible}
+        onClose={() => setIsCreateModalVisible(false)}
+        onCreate={addSubscription}
       />
     </StyledSafeAreaView>
   );
