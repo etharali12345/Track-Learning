@@ -1,15 +1,15 @@
 {
   "expo": {
     "name": "Track",
-    "slug": "Track",
+    "slug": "track-e",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/icons/logo.png",
     "scheme": "track",
     "userInterfaceStyle": "automatic",
     "ios": {
       "icon": "./assets/expo.icon",
-      "bundleIdentifier": "com.anonymous.Track"
+      "bundleIdentifier": "com.ethar.Track"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.anonymous.Track"
+      "package": "com.ethar.Track"
     },
     "web": {
       "output": "static",
@@ -31,7 +31,7 @@
         "expo-splash-screen",
         {
           "backgroundColor": "#ef2095",
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-pattern.png",
           "imageWidth": 76
         }
       ],

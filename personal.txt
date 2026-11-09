@@ -11,4 +11,32 @@ why not emplate literals?
 rnf || rnfe ==> write it on file, React Native Function with Expo, it makes component: code snippet shortcut
 
 //Clerk
-tokenCache: where the userS ession is sotred, it uses the expo-secure-store under the hood, encrypting the session token on the device
+tokenCache: where the user Session is sotred, it uses the expo-secure-store under the hood, encrypting the session token on the device
+
+
+//
+EXPO_PUBLIC_:
+     tokens needs to start with this prefix to be visible for the app. Otherwise, it will only be visible to the config file, so it needs some steps in config file to be visible.
+
+//
+    PK (publishable key, pk_...):
+        - is used in the app, on the user’s/client device. It’s what the app sends to identify itself to the service.
+        - It’s designed to ship inside client apps. On its own it can only do what a public client is allowed to do: start a sign-in flow, show the sign-up UI. It can’t read other users’ data or manage your Clerk account.
+        - fine as plain text? already visible to anyone, extract it by decompiling the app. The real protection comes from server-side checks
+    SK (secret key, sk_...) 
+        - used only on your backend server, never in the app. It’s for actions that must be trusted:
+        - gives full admin access: read, create, or delete users, and so on. It must live only on a server you control.
+
+//
+expo go: development tool
+expo EAS: Expo applicatoin service, a cloud service
+    1- built native binary in the cloud
+    2- gives installable app 
+    3- can be uploaded to app store, while automating your CI/CD process, and tracking it in real time and deliver live updates
+
+    after init, login, config, 
+    npx eas-cli@latest build --platform android __________:
+    a- auto-submition: build and upload in the play/app store
+    b- --profile ____:
+            production: build (aab) (Android App Bundle), the format Google Play
+            apk: builds an installable .apk file

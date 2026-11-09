@@ -1,6 +1,8 @@
+import { posthogLogger } from "@/config/posthog-logger";
 import { icons } from "@/constants/icon";
 import { clsx } from "clsx";
 import dayjs from "dayjs";
+import { usePostHog } from "posthog-react-native";
 import { useState } from "react";
 import {
   KeyboardAvoidingView,
@@ -61,6 +63,8 @@ export default function CreateSubscriptionModal({
   const [frequency, setFrequency] = useState<SubscriptionFrequency>("Monthly");
   const [category, setCategory] = useState<SubscriptionCategory>("Other");
 
+  const posthog = usePostHog();
+
   const parsedPrice = Number(price);
   const isValid =
     name.trim().length > 0 &&
@@ -86,7 +90,7 @@ export default function CreateSubscriptionModal({
     }
 
     const startDate = dayjs();
-    console.log("Start Date:", startDate.toISOString());
+
     const subscription: Subscription = {
       id: `subscription-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
       name: name.trim(),
@@ -104,6 +108,22 @@ export default function CreateSubscriptionModal({
     };
 
     onCreate(subscription);
+
+    posthog.capture("Subscription Created", {
+      subscription_id: subscription.id,
+      subscription_name: name,
+      subscription_price: price,
+      subscription_frequency: frequency,
+      subscription_category: category,
+    });
+    posthogLogger.info("Subscription Created", {
+      subscription_id: subscription.id,
+      subscription_name: name,
+      subscription_price: price,
+      subscription_frequency: frequency,
+      subscription_category: category,
+    });
+
     resetForm();
     onClose();
   };
